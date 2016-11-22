@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8' />
+  <title>Mapillary</title>
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.24.0/mapbox-gl.js'></script>
+  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.24.0/mapbox-gl.css' rel='stylesheet' />
+  <link href='style.css' rel='stylesheet' />
+</head>
+
+<body>
+
+<div id='map'></div>
+<nav id='menu'></nav>
+
+<script src=toggle.js></script>
+<script>
+mapboxgl.accessToken = 'pk.eyJ1IjoiY2JlZGRvdyIsImEiOiI5Q09YRG1RIn0.Izu6OPJ4CEEaSSpGuys3Xg';
+var map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/dark-v9',
+    center: [-58.43765258789062,-34.610605760914645],
+    zoom: 11
+});
+
+map.on('style.load', function () {
+  var mapillarySource = {
+      type: 'vector',
+      tiles: ['http://d25uarhxywzl1j.cloudfront.net/v0.1/{z}/{x}/{y}.mvt'],
+      minzoom: 0,
+      maxzoom: 14
+  };
+  map.addSource('temp', {
+      'type': 'geojson',
+      'data': 'data/temp_hex.geojson'
+  });
+  map.addSource('trees', {
+      'type': 'geojson',
+      'data': 'data/trees_hex.geojson'
+  });
+  map.addSource('ndvi', {
+      'type': 'geojson',
+      'data': 'data/ndvi.geojson'
+  });
+  map.addLayer({
+      'id': 'temp-layer',
+      'type': 'fill',
+      'source': 'temp',
+      'source-layer': 'temp-layer',
+      'layout': {
+            'visibility': 'visible'
+        },
+      'paint': {
+          'fill-opacity': .75,
+          'fill-color': {
+                property: 'gridcode',
+                type: 'interval',
+                stops: [
+                    ['4', '#053061'],
+                    ['8', '#2166ac'],
+                    ['12', '#4393c3'],
+                    ['16', '#92c5de'],
+                    ['20', '#f4a582'],
+                    ['24', '#d6604d'],
+                    ['28', '#b2182b'],
+                    ['32', '#67001f']]
+          }
+      }
+  });
+  map.addLayer({
+      'id': 'trees-layer',
+      'type': 'fill',
+      'source': 'trees',
+      'source-layer': 'trees-layer',
+      'layout': {
+            'visibility': 'none'
+        },
+        'paint': {
+            'fill-opacity': .75,
+            'fill-color': {
+                  property: 'Sum_Count',
+                  type: 'interval',
+                  stops: [
+                      ['24', '#f7fcf5'],
+                      ['48', '#e5f5e0'],
+                      ['72', '#c7e9c0'],
+                      ['96', '#a1d99b'],
+                      ['120', '#74c476'],
+                      ['144', '#41ab5d'],
+                      ['168', '#238b45'],
+                      ['192', '#006d2c']]
+            }
+        }
+  });
+  map.addLayer({
+      'id': 'ndvi-layer',
+      'type': 'fill',
+      'source': 'ndvi',
+      'source-layer': 'ndvi-layer',
+      'layout': {
+            'visibility': 'none'
+        },
+        'paint': {
+              'fill-opacity': .75,
+              'fill-color': 'rgba(255, 255, 128, 0.4)'
+        }
+  });
+  map.addSource('mapillary', mapillarySource);
+  map.addLayer({
+      'id': 'mapillary',
+      'type': 'line',
+      'source': 'mapillary',
+      'source-layer': 'mapillary-sequences',
+      'layout': {
+          'line-cap': 'round',
+          'line-join': 'round'
+      },
+      'paint': {
+          'line-opacity': 0.75,
+          'line-color':   'rgb(53, 175, 109)',
+          'line-width':   2
+      }
+  });
+});
+
+</script>
+</body>
+</html>
