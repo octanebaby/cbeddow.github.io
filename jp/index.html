@@ -81,8 +81,8 @@ input {
 
 <div class='map-overlay top'>
     <div class='map-overlay-inner'>
-        <label>Mapillary: <span id='slider-value'>30 days before today</span></label>
-        <input id='slider' type='range' min='1' max='30' step='1' value='30' />
+        <label>Mapillary: <span id='slider-value'>1 days before today</span></label>
+        <input id='slider' type='range' min='1' max='120' step='1' value='1' />
     </div>
 
 <div id='menu' class='map-overlay-inner'>
@@ -104,9 +104,9 @@ var map = new mapboxgl.Map({
     container: 'map',
 //      style: 'mapbox://styles/cbeddow/civtqd38b00212jk1egi07z1n', //this is my custom style with no labels
     style: 'mapbox://styles/mapbox/outdoors-v9', //this is default style with labels
-    center: [ 140.49316406249994,
-          36.31512514748051],
-    zoom: 6.5,
+    center: [  139.63777542114258,
+          35.440812978395144],
+    zoom: 12,
 });
 
 var layerList = document.getElementById('menu');
@@ -126,7 +126,7 @@ var sliderValue = document.getElementById('slider-value');
 
 
 var maxdate = Date.now();
-var mindate = (maxdate-(86400000 * 30)) //set to show Mapillary sequences from last 30 days
+var mindate = (maxdate-(86400000 * 1)) //set to show Mapillary sequences from last 30 days
 var last30 = (maxdate-(86400000 * 30))
 
 
@@ -178,7 +178,14 @@ map.on('style.load', function () {
               },
               'paint': {
                   'line-opacity': 0.75,
-                  'line-color':   'rgb(53, 175, 109)',
+                  'line-color':   {
+                    property: 'captured_at',
+                    type: 'interval',
+                    stops: [
+                      [0, 'magenta'],
+                      [maxdate-86400000, 'rgb(53, 175, 109)']
+                    ]
+                  },
                   'line-width':   2
               }
           },'zona');
