@@ -132,8 +132,8 @@ var last30 = (maxdate-(86400000 * 30))
 
 map.on('style.load', function () {
   var mapillarySource = {
-      type: 'vector',
-      tiles: ['https://d25uarhxywzl1j.cloudfront.net/v0.1/{z}/{x}/{y}.mvt'],
+      type: 'raster',
+      tiles: ['https://d6a1v2w10ny40.cloudfront.net/v0.1/{z}/{x}/{y}.png'],
       minzoom: 0,
       maxzoom: 14,
   };
@@ -235,8 +235,7 @@ map.on('click', function (e) {
         return;
     }
     var feature = features[0];
-    var d = new Date(0);
-    d.setUTCSeconds(feature.properties.time);
+    var d = new Date(feature.properties.time).toUTCString();
     var popup = new mapboxgl.Popup()
         .setLngLat(feature.geometry.coordinates)
         .setHTML("Magnitude: " + feature.properties.mag +"<br>Epicenter: " + feature.properties.place + "<br>Time: " + d)
