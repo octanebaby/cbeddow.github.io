@@ -139,45 +139,73 @@ map.on('style.load', function () {
 
   map.addSource('mapillary', mapillarySource);
   map.addLayer({
-      'id': 'mapillary',
-      'type': 'line',
+      'id': 'mapillary-o',
+      'type': 'circle',
       'source': 'mapillary',
       'source-layer': 'mapillary-sequence-overview',
       'filter': ['all',
               ['>=', 'captured_at', mindate],
               ['<=', 'captured_at', maxdate]],
-      'layout': {
-          'line-cap': 'round',
-          'line-join': 'round'
-      },
       'paint': {
-          'line-opacity': 0.75,
-          'line-color':   'rgb(53, 175, 109)',
-          'line-width':   2
+          'circle-opacity': 0.75,
+          'circle-color':   'rgb(53, 175, 109)',
+          'circle-radius':   2
       }
   });
+  map.addLayer({
+     'id': 'mapillary',
+     'type': 'line',
+     'source': 'mapillary',
+     'source-layer': 'mapillary-sequences',
+     'filter': ['all',
+             ['>=', 'captured_at', mindate],
+             ['<=', 'captured_at', maxdate]],
+     'layout': {
+         'line-cap': 'round',
+         'line-join': 'round'
+     },
+     'paint': {
+         'line-opacity': 0.75,
+         'line-color':   'rgb(53, 175, 109)',
+         'line-width':   2
+     }
+ });
 
   slider.addEventListener('input', function(e) {
           var newDate = (maxdate-(86400000 * e.target.value))
-          map.removeLayer('mapillary');
+          map.removeLayer('mapillary','mapillary-o');
           map.addLayer({
-              'id': 'mapillary',
-              'type': 'line',
+              'id': 'mapillary-o',
+              'type': 'circle',
               'source': 'mapillary',
               'source-layer': 'mapillary-sequence-overview',
               'filter': ['all',
                       ['>=', 'captured_at', newDate],
                       ['<=', 'captured_at', maxdate]],
-              'layout': {
-                  'line-cap': 'round',
-                  'line-join': 'round'
-              },
               'paint': {
-                  'line-opacity': 0.75,
-                  'line-color':   'rgb(53, 175, 109)',
-                  'line-width':   2
+                  'circle-opacity': 0.75,
+                  'circle-color':   'rgb(53, 175, 109)',
+                  'circle-radius':   2
               }
           },'exzona');
+          map.addLayer({
+               'id': 'mapillary',
+               'type': 'line',
+               'source': 'mapillary',
+               'source-layer': 'mapillary-sequences',
+               'filter': ['all',
+                       ['>=', 'captured_at', newDate],
+                       ['<=', 'captured_at', maxdate]],
+               'layout': {
+                   'line-cap': 'round',
+                   'line-join': 'round'
+               },
+               'paint': {
+                   'line-opacity': 0.75,
+                   'line-color':   'rgb(53, 175, 109)',
+                   'line-width':   2
+               }
+           }, 'exzona');
 
           // Value indicator
           sliderValue.textContent = e.target.value + ' days before today';
