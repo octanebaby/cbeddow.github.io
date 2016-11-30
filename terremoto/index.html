@@ -242,8 +242,7 @@ map.on('click', function (e) {
         return;
     }
     var feature = features[0];
-    var d = new Date(0);
-    d.setUTCSeconds(feature.properties.time);
+    var d = new Date(feature.properties.time).toUTCString();
     var popup = new mapboxgl.Popup()
         .setLngLat(feature.geometry.coordinates)
         .setHTML("Grandezza: " + feature.properties.mag +"<br>Epicentro: " + feature.properties.place + "<br>Tempo: " + d)
