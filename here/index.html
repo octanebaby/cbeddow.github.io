@@ -90,7 +90,7 @@ input {
       <img src='http://blog.mapillary.com/img/2016-08-24-here-logo.png' width=62% height=62%>
     </div>
     <div class='map-overlay-inner'>
-        <label>Mapillary: <span id='slider-value'>added 1 day ago</span></label>
+        <label>Mapillary: <span id='slider-value'>added in last 1 day</span></label>
         <input id='slider' type='range' min='1' max='120' step='1' value='1' />
     </div>
 
@@ -218,7 +218,7 @@ map.on('style.load', function () {
            }, 'exzona');
 
           // Value indicator
-          sliderValue.textContent = 'added ' + e.target.value + ' days ago';
+          sliderValue.textContent = 'added in last ' + e.target.value + ' days';
 
       });
 
