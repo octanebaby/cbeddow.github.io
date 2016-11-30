@@ -81,6 +81,7 @@ input {
   background-color: 'white';
 }
 </style>
+
 </head>
 
 <body>
@@ -90,10 +91,17 @@ input {
       <img src='http://blog.mapillary.com/img/2016-08-24-here-logo.png' width=62% height=62%>
     </div>
     <div class='map-overlay-inner'>
-        <label>Mapillary: <span id='slider-value'>added in last 1 day</span></label>
-        <input id='slider' type='range' min='1' max='120' step='1' value='1' />
+        <label>Mapillary Progress: <br><span id='slider-value'> </span></label>
+        <input id='slider' type='range' min='1' max='' step='1' value='1' />
+        <script>
+        var days = (Date.now()-1470006001000)/86400000;
+        console.log(days);
+        document.getElementById('slider').max = days;
+        document.getElementById('slider').value = days;
+        document.getElementById('slider-value').innerHTML = Math.floor(days) + ' days since August 1st';
+        </script>
     </div>
-
+1470006001000
 <div id='menu' class='map-overlay-inner'>
     <input id='dark' type='button' name='rtoggle' value='dark' class='btn'>
     <input id='satellite' type='button' name='rtoggle' value='satellite' class='btn'>
@@ -218,7 +226,7 @@ map.on('style.load', function () {
            }, 'exzona');
 
           // Value indicator
-          sliderValue.textContent = 'added in last ' + e.target.value + ' days';
+          sliderValue.textContent = e.target.value + ' days since August 1st';
 
       });
 
