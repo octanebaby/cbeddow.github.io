@@ -237,7 +237,7 @@ map.on('style.load', function () {
       'source': 'mapillary',
       'source-layer': 'mapillary-sequence-overview',
       'filter': ['all',
-              ['in', 'userkey', users],
+              ['in', 'userkey'].concat(users),
               ['>=', 'captured_at', mindate],
               ['<=', 'captured_at', maxdate]],
       'paint': {
@@ -252,7 +252,7 @@ map.on('style.load', function () {
      'source': 'mapillary',
      'source-layer': 'mapillary-sequences',
      'filter': ['all',
-             ['in', 'userkey', users],
+             ['in', 'userkey'].concat(users),
              ['>=', 'captured_at', mindate],
              ['<=', 'captured_at', maxdate]],
      'layout': {
@@ -276,7 +276,7 @@ map.on('style.load', function () {
               'source': 'mapillary',
               'source-layer': 'mapillary-sequence-overview',
               'filter': ['all',
-//                      ['in', 'userkey', users],
+                      ['in', 'userkey'].concat(users),
                       ['>=', 'captured_at', newDate],
                       ['<=', 'captured_at', maxdate]],
               'paint': {
@@ -291,7 +291,7 @@ map.on('style.load', function () {
                'source': 'mapillary',
                'source-layer': 'mapillary-sequences',
                'filter': ['all',
-//                       ['in', 'userkey', users],
+                       ['in', 'userkey'].concat(users),
                        ['>=', 'captured_at', newDate],
                        ['<=', 'captured_at', maxdate]],
                'layout': {
