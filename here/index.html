@@ -6,6 +6,7 @@
   <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
   <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.24.0/mapbox-gl.js'></script>
   <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.24.0/mapbox-gl.css' rel='stylesheet' />
+  <script src="jquery-3.1.1.min.js"></script>
 <style>
 #map {
   position:absolute;
@@ -69,11 +70,24 @@ input {
     padding: 0px;
     font-weight: bold;
 }
-.btn:hover {
-  color: #FFF;
-  background: #900;
+.btn {
+  padding: 5px;
   cursor: pointer;
 }
+.mbtn {
+  padding: 5px;
+  cursor: pointer;
+}
+/*.btn:hover {
+  color: #FFF;
+  background: #333333;
+  cursor: pointer;
+}
+.mbtn:hover {
+  color: #FFF;
+  background: #9933ff;
+  cursor: pointer;
+} */
 #logo {
   padding: 5px;
   margin-bottom: 10px;
@@ -101,15 +115,17 @@ input {
         document.getElementById('slider-value').innerHTML = Math.floor(days) + ' days since August 1st';
         </script>
     </div>
-1470006001000
-<div id='menu' class='map-overlay-inner'>
-    <input id='dark' type='button' name='rtoggle' value='dark' class='btn'>
-    <input id='satellite' type='button' name='rtoggle' value='satellite' class='btn'>
-</div>
+
+    <div id='menu' class='map-overlay-inner'>
+      <div id='dark' class='btn' style='background-color:#333333;color:#FFF;'>Basemap: Dark</div>
+      <div id='satellite' class='btn'>Basemap: Satellite</div>
+      <div id='mly' class='mbtn'>Show all Mapillary</div>
+    </div>
 </div>
 <div id='map'></div>
 
 <script>
+
 mapboxgl.accessToken = 'pk.eyJ1IjoiY2JlZGRvdyIsImEiOiI5Q09YRG1RIn0.Izu6OPJ4CEEaSSpGuys3Xg';
 var bounds = [
   [ 12.06298828125,
@@ -119,20 +135,77 @@ var bounds = [
 ];
 var map = new mapboxgl.Map({
     container: 'map',
-//      style: 'mapbox://styles/cbeddow/civtqd38b00212jk1egi07z1n', //this is my custom style with no labels
-    style: 'mapbox://styles/mapbox/dark-v9', //this is default style with labels
+    style: 'mapbox://styles/mapbox/dark-v9',
     center: [56,
           56],
     zoom: 3
 });
 
 var layerList = document.getElementById('menu');
-var inputs = layerList.getElementsByTagName('input');
+var inputs = layerList.getElementsByClassName('btn');
+var count = 0
+
+function mlyAdd() {
+    console.log(count);
+    switch (count) {
+      case 0:
+        mly.style.backgroundColor = "#9933ff";
+        mly.style.color = "#FFF";
+        count = 1;
+        map.addLayer({
+            'id': 'mapillary-all',
+            'type': 'circle',
+            'source': 'mapillary',
+            'source-layer': 'mapillary-sequence-overview',
+            'paint': {
+                'circle-opacity': 0.75,
+                'circle-color':   'magenta',
+                'circle-radius':   1
+            }
+        }, 'mapillary-o');
+        map.addLayer({
+           'id': 'mapillary-all2',
+           'type': 'line',
+           'source': 'mapillary',
+           'source-layer': 'mapillary-sequences',
+           'layout': {
+               'line-cap': 'round',
+               'line-join': 'round'
+           },
+           'paint': {
+               'line-opacity': 0.75,
+               'line-color':   'magenta',
+               'line-width':   1
+           }
+        }, 'mapillary');
+        break;
+      case 1:
+        mly.style.backgroundColor = "#a9a9a9";
+        mly.style.color = "#000";
+        count = 0;
+        map.removeLayer('mapillary-all', 'mapillary-all2');
+        break;
+    };
+};
 
 function switchLayer(layer) {
     var layerId = layer.target.id;
     map.setStyle('mapbox://styles/mapbox/' + layerId + '-v9');
-}
+    switch (layerId) {
+      case 'dark':
+        dark.style.backgroundColor = "#333333";
+        dark.style.color = "#FFF";
+        satellite.style.backgroundColor = "#a9a9a9";
+        satellite.style.color = "#000";
+        break;
+      case 'satellite':
+        satellite.style.backgroundColor = "#333333";
+        satellite.style.color = "#FFF";
+        dark.style.backgroundColor = "#a9a9a9";
+        dark.style.color = "#000";
+        break;
+    };
+};
 
 for (var i = 0; i < inputs.length; i++) {
     inputs[i].onclick = switchLayer;
@@ -143,7 +216,7 @@ var sliderValue = document.getElementById('slider-value');
 
 
 var maxdate = Date.now();
-var mindate = (maxdate-(86400000 * 1)) //set to show Mapillary sequences from last 30 days
+var mindate = (1470006001000) //set to show Mapillary sequences from August 1, 2016 onward
 var last30 = (maxdate-(86400000 * 30))
 
 
@@ -162,6 +235,7 @@ map.on('style.load', function () {
       'source': 'mapillary',
       'source-layer': 'mapillary-sequence-overview',
       'filter': ['all',
+//              ['in', 'userkey', users],
               ['>=', 'captured_at', mindate],
               ['<=', 'captured_at', maxdate]],
       'paint': {
@@ -169,13 +243,14 @@ map.on('style.load', function () {
           'circle-color':   'rgb(53, 175, 109)',
           'circle-radius':   2
       }
-  }, 'water');
+  });
   map.addLayer({
      'id': 'mapillary',
      'type': 'line',
      'source': 'mapillary',
      'source-layer': 'mapillary-sequences',
      'filter': ['all',
+//             ['in', 'userkey', users],
              ['>=', 'captured_at', mindate],
              ['<=', 'captured_at', maxdate]],
      'layout': {
@@ -187,7 +262,8 @@ map.on('style.load', function () {
          'line-color':   'rgb(53, 175, 109)',
          'line-width':   2
      }
- },'water');
+ });
+  mly.onclick = mlyAdd;
 
   slider.addEventListener('input', function(e) {
           var newDate = (maxdate-(86400000 * e.target.value))
@@ -198,6 +274,7 @@ map.on('style.load', function () {
               'source': 'mapillary',
               'source-layer': 'mapillary-sequence-overview',
               'filter': ['all',
+//                      ['in', 'userkey', users],
                       ['>=', 'captured_at', newDate],
                       ['<=', 'captured_at', maxdate]],
               'paint': {
@@ -212,6 +289,7 @@ map.on('style.load', function () {
                'source': 'mapillary',
                'source-layer': 'mapillary-sequences',
                'filter': ['all',
+//                       ['in', 'userkey', users],
                        ['>=', 'captured_at', newDate],
                        ['<=', 'captured_at', maxdate]],
                'layout': {
