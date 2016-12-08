@@ -7,6 +7,9 @@
   <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.24.0/mapbox-gl.js'></script>
   <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.24.0/mapbox-gl.css' rel='stylesheet' />
   <link href='style.css' rel='stylesheet' />
+  <script src='https://unpkg.com/mapillary-js@2.1.0/dist/mapillary.min.js'></script>
+  <link href='https://unpkg.com/mapillary-js@2.1.0/dist/mapillary.min.css' rel='stylesheet' />
+  <script src="jquery-3.1.1.min.js"></script>
 </head>
 
 <body>
@@ -14,14 +17,25 @@
 <div id='map'></div>
 <nav id='menu'></nav>
 
-<script src=toggle.js></script>
+<script src='toggle.js'></script>
 <script>
 mapboxgl.accessToken = 'pk.eyJ1IjoiY2JlZGRvdyIsImEiOiI5Q09YRG1RIn0.Izu6OPJ4CEEaSSpGuys3Xg';
 var map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/dark-v9',
-    center: [-58.43765258789062,-34.610605760914645],
-    zoom: 11
+    center: [-58.41499328613282,
+          -34.61399647590715],
+    zoom: 10.5,
+    maxBounds: [
+      [
+        -58.941650390625,
+        -35.04798673426733
+        ],
+        [
+          -57.908935546875,
+          -34.28899186503752
+        ]
+      ]
 });
 
 map.on('style.load', function () {
@@ -43,13 +57,23 @@ map.on('style.load', function () {
       'type': 'geojson',
       'data': 'data/ndvi.geojson'
   });
+  map.addSource('trees_img', {
+      'type': 'geojson',
+      'data': 'data/trees_img.geojson'
+  });
+/*  map.addSource('trees_census', {
+      'type': 'geojson',
+      'data': 'data/trees_census.geojson'
+  }); */
+  var tempscale = ['#8b0000','#b11403','#d13706','#e85a15','#f97f2f','#ffa654','#ffcc85','#ffeebf','#e8f0d6','#bfd2c6','#9cb1bd','#7e90ba','#646dbc','#4848bf','#221fb7','#00008b']
+  var treescale = ['#ffffe0','#f3f9ca','#e6f2b3','#d9eb9f','#cce488','#bddd70','#b0d75b','#a2d141','#90c62e','#7ab826','#66aa1e','#519d16','#3c8e0e','#278107','#117302','#006400']
   map.addLayer({
-      'id': 'temp-layer',
+      'id': 'Temperature',
       'type': 'fill',
       'source': 'temp',
       'source-layer': 'temp-layer',
       'layout': {
-            'visibility': 'visible'
+            'visibility': 'none'
         },
       'paint': {
           'fill-opacity': .75,
@@ -57,19 +81,28 @@ map.on('style.load', function () {
                 property: 'gridcode',
                 type: 'interval',
                 stops: [
-                    ['4', '#053061'],
-                    ['8', '#2166ac'],
-                    ['12', '#4393c3'],
-                    ['16', '#92c5de'],
-                    ['20', '#f4a582'],
-                    ['24', '#d6604d'],
-                    ['28', '#b2182b'],
-                    ['32', '#67001f']]
+                    ['2', tempscale[15]],
+                    ['4', tempscale[14]],
+                    ['6', tempscale[13]],
+                    ['8', tempscale[12]],
+                    ['10', tempscale[11]],
+                    ['12', tempscale[10]],
+                    ['14', tempscale[9]],
+                    ['16', tempscale[8]],
+                    ['18', tempscale[7]],
+                    ['20', tempscale[6]],
+                    ['22', tempscale[5]],
+                    ['24', tempscale[4]],
+                    ['26', tempscale[3]],
+                    ['28', tempscale[2]],
+                    ['30', tempscale[1]],
+                    ['32', tempscale[0]]
+                ]
           }
       }
   });
   map.addLayer({
-      'id': 'trees-layer',
+      'id': 'Tree Density',
       'type': 'fill',
       'source': 'trees',
       'source-layer': 'trees-layer',
@@ -82,19 +115,28 @@ map.on('style.load', function () {
                   property: 'Sum_Count',
                   type: 'interval',
                   stops: [
-                      ['24', '#f7fcf5'],
-                      ['48', '#e5f5e0'],
-                      ['72', '#c7e9c0'],
-                      ['96', '#a1d99b'],
-                      ['120', '#74c476'],
-                      ['144', '#41ab5d'],
-                      ['168', '#238b45'],
-                      ['192', '#006d2c']]
-            }
+                    ['12', treescale[0]],
+                    ['24', treescale[1]],
+                    ['36', treescale[2]],
+                    ['48', treescale[3]],
+                    ['60', treescale[4]],
+                    ['72', treescale[5]],
+                    ['84', treescale[6]],
+                    ['96', treescale[7]],
+                    ['108', treescale[8]],
+                    ['120', treescale[9]],
+                    ['132', treescale[10]],
+                    ['144', treescale[11]],
+                    ['156', treescale[12]],
+                    ['168', treescale[13]],
+                    ['180', treescale[14]],
+                    ['192', treescale[15]]
+                ]
+           }
         }
   });
   map.addLayer({
-      'id': 'ndvi-layer',
+      'id': 'Vegetation',
       'type': 'fill',
       'source': 'ndvi',
       'source-layer': 'ndvi-layer',
@@ -103,27 +145,115 @@ map.on('style.load', function () {
         },
         'paint': {
               'fill-opacity': .75,
-              'fill-color': 'rgba(255, 255, 128, 0.4)'
+              'fill-color': '#ffff80'
         }
   });
   map.addSource('mapillary', mapillarySource);
   map.addLayer({
-      'id': 'mapillary',
+      'id': 'Mapillary',
       'type': 'line',
       'source': 'mapillary',
       'source-layer': 'mapillary-sequences',
       'layout': {
+          'visibility': 'none',
           'line-cap': 'round',
           'line-join': 'round'
       },
       'paint': {
           'line-opacity': 0.75,
-          'line-color':   'rgb(53, 175, 109)',
+          'line-color':   '#35af6d',
           'line-width':   2
       }
   });
+  map.addLayer({
+      'id': 'Tree Images',
+      'type': 'circle',
+      'source': 'trees_img',
+      'source-layer': 'trees_img',
+      'layout': {
+        'visibility': 'none'
+      },
+      'paint': {
+          'circle-color': "magenta",
+          'circle-opacity': .2,
+          'circle-radius': {      //sets circle size to depend o quake magnitude
+            property: 'area',
+            type: 'exponential',
+            stops: [
+                [0, 1],
+                [1,10]
+            ]
+          }
+      }
+  });
+/*   map.addLayer({
+      'id': 'Tree Census',
+      'type': 'circle',
+      'source': 'trees_census',
+      'source-layer': 'trees_census',
+      'layout': {
+        'visibility': 'visible'
+      },
+      'paint': {
+          'circle-color': "yellow",
+          'circle-opacity': .5,
+          'circle-radius': 3
+      }
+  });
+ map.addLayer({
+      'id': 'mapillary',
+      'type': 'circle',
+      'source': 'mapillary',
+      'source-layer': 'mapillary-images',
+      'layout': {
+          'visibility': 'visible'
+      },
+      'paint': {
+          'circle-opacity': 0.75,
+          'circle-radius': 3,
+          'circle-color':   'rgb(53, 175, 109)'
+      }
+  }); */
+});
+map.on('click', function (e) {
+    var features = map.queryRenderedFeatures(e.point, { layers: ['Tree Images'] });
+//    var coords = e.lngLat
+//    var lng = JSON.stringify(coords['lng']);
+//    var lat = JSON.stringify(coords['lat']);
+    if (!features.length) {
+        return;
+    }
+    var feature = features[0];
+    var imgkey = feature.properties["key"];
+    console.log(imgkey);
+//    var client = 'UTZhSnNFdGpxSEFFREUwb01GYzlXZzpkMWM2YzdjYjQxN2FhM2Vh'
+//    url = "https://a.mapillary.com/v2/search/im/close?client_id=" + client + "&lat="+lat+"&limit=1&lon="+lng
+//    imagekey = 'KXPQhn74azgtjJYcrGK-Fw';
+/*    $.ajax({
+      dataType: "json",
+      url: url,
+      success: function (data) {
+          console.log(JSON.stringify(map.unproject(e.point)));
+          var imgkey = data.ims[0].key;
+          var lng = data.ims[0].lon;
+          var lat = data.ims[0].lat;
+          var lnglat = '{\"lng\":' + lng + ', \"lat\":' + lat + '}'
+//          console.log(lnglat);
+          console.log(imgkey);
+*/
+          var popup = new mapboxgl.Popup()
+              .setLngLat(feature.geometry.coordinates)
+              .setHTML("<iframe width=\"320\" height=\"200\" src=\"https://embed-v1.mapillary.com/embed?show_segmentation=true&version=1&filter=%5B%22all%22%5D&map_filter=%5B%22all%22%5D&image_key=" + imgkey + "&client_id=UTZhSnNFdGpxSEFFREUwb01GYzlXZzowMzg0MDZhNjNkYmNmMzQ0&style=photo\" frameborder=\"0\"></iframe><br><button style=\"float:left;background-color: white;border: none;color: black;padding: 5px 11px;text-align: center;text-decoration: none;display: inline-block;font-size: 12px;\">% tree pixels: " + (feature.properties["area"]*100).toFixed(2) + "</button> <button style=\"float:right;background-color: #4CAF50;border: none;color: white;padding: 5px 11px;text-align: center;text-decoration: none;display: inline-block;font-size: 12px;\" onclick=\"window.open('https://embed-v1.mapillary.com/embed?show_segmentation=true&version=1&filter=%5B%22all%22%5D&map_filter=%5B%22all%22%5D&image_key=" + imgkey + "&client_id=UTZhSnNFdGpxSEFFREUwb01GYzlXZzowMzg0MDZhNjNkYmNmMzQ0&style=photo','_blank','resizable=yes')\">Open in Mapillary</button>")
+//              .setHTML("<img src=https://d1cuyjsrcm0gby.cloudfront.net/"+ imgkey + "/thumb-320.jpg>")
+              .addTo(map);
+//    });
+
 });
 
+map.on('mousemove', function (e) {
+    var features = map.queryRenderedFeatures(e.point, { layers: ['Tree Images'] });
+    map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+});
 </script>
 </body>
 </html>
