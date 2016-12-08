@@ -45,6 +45,14 @@ map.on('style.load', function () {
       minzoom: 0,
       maxzoom: 14
   };
+  var tileIndex = geojsonvt('data/trees_census.geojson');
+  var treetiles = tileIndex.getTile(z, x, y).features;
+  var trees_census = {
+      type: 'vector',
+      tiles: [treetiles],
+      minzoom: 0,
+      maxzoom: 17
+  };
   map.addSource('temp', {
       'type': 'geojson',
       'data': 'data/temp_hex.geojson'
@@ -184,6 +192,20 @@ map.on('style.load', function () {
                 [1,10]
             ]
           }
+      }
+  });
+  map.addLayer({
+      'id': 'trees_census',
+      'type': 'circle',
+      'source': 'trees_census',
+      'source-layer': 'trees_census',
+      'layout': {
+        'visibility': 'visible'
+      },
+      'paint': {
+          'circle-color': "gold",
+          'circle-opacity': .2,
+          'circle-radius': 3
       }
   });
 /*   map.addLayer({
