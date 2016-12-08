@@ -70,10 +70,7 @@ map.on('style.load', function () {
       'type': 'geojson',
       'data': 'data/trees_img.geojson'
   });
-/*  map.addSource('trees_census', {
-      'type': 'geojson',
-      'data': 'data/trees_census.geojson'
-  }); */
+  map.addSource('trees_census', trees_census); 
   var tempscale = ['#8b0000','#b11403','#d13706','#e85a15','#f97f2f','#ffa654','#ffcc85','#ffeebf','#e8f0d6','#bfd2c6','#9cb1bd','#7e90ba','#646dbc','#4848bf','#221fb7','#00008b']
   var treescale = ['#ffffe0','#f3f9ca','#e6f2b3','#d9eb9f','#cce488','#bddd70','#b0d75b','#a2d141','#90c62e','#7ab826','#66aa1e','#519d16','#3c8e0e','#278107','#117302','#006400']
   map.addLayer({
