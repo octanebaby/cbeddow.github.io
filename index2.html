@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8' />
+  <title>Mapillary</title>
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.24.0/mapbox-gl.js'></script>
+  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.24.0/mapbox-gl.css' rel='stylesheet' />
+  <link href='style.css' rel='stylesheet' />
+  <script src='https://unpkg.com/mapillary-js@2.1.0/dist/mapillary.min.js'></script>
+  <link href='https://unpkg.com/mapillary-js@2.1.0/dist/mapillary.min.css' rel='stylesheet' />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="slides.js"></script>
+</head>
+
+<body>
+
+<div class='col-lg-3' style='background-color:black;' id='slide'>
+  <figure>
+    <ul id='slide2' style='margin: 200px 5px 0px 5px;color:white;'>
+      <li>Hello this is my first slide</li>
+      <li>I'm talking about stuff</li>
+      <li>in these slides</li>
+      <li>now</li>
+    </ul>
+    <p style='vertical-align:bottom;'>
+      <a  onclick='' style='float:left;color:#35af6d;vertical-align:bottom;' onclick='prev()'>&#10094;</a>
+      <a  onclick='' style='float:right;color:#35af6d;vertical-align:bottom;' onclick='next()'>&#10095;</a>
+    </p>
+  </figure>
+  <!-- more figures here as needed -->
+</div>
+<div class='col-lg-9' id='map-holder' style='background-color:#35af6d;padding:0px'>
+  <div id='map'></div>
+  <nav id='menu'></nav>
+</div>
+
+
+<script src='toggle.js'></script>
+<script>
+mapboxgl.accessToken = 'pk.eyJ1IjoiY2JlZGRvdyIsImEiOiI5Q09YRG1RIn0.Izu6OPJ4CEEaSSpGuys3Xg';
+var mapmargin = 0;
+$('#map').css("height", ($(window).height() - mapmargin));
+$(window).on("resize", resize);
+resize();
+function resize(){
+
+    if($(window).width()>=980){
+        $('#map').css("height", ($(window).height() - mapmargin));
+        $('#map').css("margin-top",0);
+    }else{
+        $('#map').css("height", ($(window).height() - (mapmargin)));
+        $('#map').css("margin-top",-21);
+    }
+
+}
+var slidemargin = 0;
+$('#slide').css("height", ($(window).height() - slidemargin));
+$(window).on("resize", resize);
+resize();
+function resize(){
+
+    if($(window).width()>=980){
+        $('#slide').css("height", ($(window).height() - slidemargin));
+        $('#slide').css("margin-top",0);
+    }else{
+        $('#slide').css("height", ($(window).height() - (slidemargin+10)));
+        $('#slide').css("margin-top",-21);
+    }
+
+}
+
+var map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/dark-v9',
+    center: [-58.41499328613282,
+          -34.61399647590715],
+    zoom: 10.5,
+    maxBounds: [
+      [
+        -58.941650390625,
+        -35.04798673426733
+        ],
+        [
+          -57.908935546875,
+          -34.28899186503752
+        ]
+      ]
+});
+
+map.on('style.load', function () {
+  var mapillarySource = {
+      type: 'vector',
+      tiles: ['http://d25uarhxywzl1j.cloudfront.net/v0.1/{z}/{x}/{y}.mvt'],
+      minzoom: 0,
+      maxzoom: 14
+  };
+  map.addSource('temp', {
+      'type': 'geojson',
+      'data': 'data/temp_hex.geojson'
+  });
+  map.addSource('trees', {
+      'type': 'geojson',
+      'data': 'data/trees_hex.geojson'
+  });
+  map.addSource('ndvi', {
+      'type': 'geojson',
+      'data': 'data/ndvi.geojson'
+  });
+  map.addSource('trees_img', {
+      'type': 'geojson',
+      'data': 'data/trees_img.geojson'
+  });
+  var tempscale = ['#8b0000','#b11403','#d13706','#e85a15','#f97f2f','#ffa654','#ffcc85','#ffeebf','#e8f0d6','#bfd2c6','#9cb1bd','#7e90ba','#646dbc','#4848bf','#221fb7','#00008b']
+  var treescale = ['#ffffe0','#f3f9ca','#e6f2b3','#d9eb9f','#cce488','#bddd70','#b0d75b','#a2d141','#90c62e','#7ab826','#66aa1e','#519d16','#3c8e0e','#278107','#117302','#006400']
+  map.addLayer({
+      'id': 'temp-layer',
+      'type': 'fill',
+      'source': 'temp',
+      'source-layer': 'temp-layer',
+      'layout': {
+            'visibility': 'none'
+        },
+      'paint': {
+          'fill-opacity': .75,
+          'fill-color': {
+                property: 'gridcode',
+                type: 'interval',
+                stops: [
+                    ['2', tempscale[15]],
+                    ['4', tempscale[14]],
+                    ['6', tempscale[13]],
+                    ['8', tempscale[12]],
+                    ['10', tempscale[11]],
+                    ['12', tempscale[10]],
+                    ['14', tempscale[9]],
+                    ['16', tempscale[8]],
+                    ['18', tempscale[7]],
+                    ['20', tempscale[6]],
+                    ['22', tempscale[5]],
+                    ['24', tempscale[4]],
+                    ['26', tempscale[3]],
+                    ['28', tempscale[2]],
+                    ['30', tempscale[1]],
+                    ['32', tempscale[0]]
+                ]
+          }
+      }
+  }, 'water');
+  map.addLayer({
+      'id': 'trees-layer',
+      'type': 'fill',
+      'source': 'trees',
+      'source-layer': 'trees-layer',
+      'layout': {
+            'visibility': 'none'
+        },
+        'paint': {
+            'fill-opacity': .75,
+            'fill-color': {
+                  property: 'Sum_Count',
+                  type: 'interval',
+                  stops: [
+                    ['12', treescale[0]],
+                    ['24', treescale[1]],
+                    ['36', treescale[2]],
+                    ['48', treescale[3]],
+                    ['60', treescale[4]],
+                    ['72', treescale[5]],
+                    ['84', treescale[6]],
+                    ['96', treescale[7]],
+                    ['108', treescale[8]],
+                    ['120', treescale[9]],
+                    ['132', treescale[10]],
+                    ['144', treescale[11]],
+                    ['156', treescale[12]],
+                    ['168', treescale[13]],
+                    ['180', treescale[14]],
+                    ['192', treescale[15]]
+                ]
+           }
+        }
+  }, 'water');
+  map.addLayer({
+      'id': 'ndvi-layer',
+      'type': 'fill',
+      'source': 'ndvi',
+      'source-layer': 'ndvi-layer',
+      'layout': {
+            'visibility': 'none'
+        },
+        'paint': {
+              'fill-opacity': .75,
+              'fill-color': '#ffff80'
+        }
+  }, 'water');
+  map.addSource('mapillary', mapillarySource);
+  map.addLayer({
+      'id': 'mapillary',
+      'type': 'line',
+      'source': 'mapillary',
+      'source-layer': 'mapillary-sequences',
+      'layout': {
+          'visibility': 'none',
+          'line-cap': 'round',
+          'line-join': 'round'
+      },
+      'paint': {
+          'line-opacity': 0.75,
+          'line-color':   '#35af6d',
+          'line-width':   2
+      }
+  });
+  map.addLayer({
+      'id': 'trees-img',
+      'type': 'circle',
+      'source': 'trees_img',
+      'source-layer': 'trees_img',
+      'layout': {
+        'visibility': 'visible'
+      },
+      'paint': {
+          'circle-color': "magenta",
+          'circle-opacity': .2,
+          'circle-radius': {      //sets circle size to depend o quake magnitude
+            property: 'area',
+            type: 'exponential',
+            stops: [
+                [0, 1],
+                [1,10]
+            ]
+          }
+      }
+  });
+/*  map.addLayer({
+      'id': 'mapillary',
+      'type': 'circle',
+      'source': 'mapillary',
+      'source-layer': 'mapillary-images',
+      'layout': {
+          'visibility': 'visible'
+      },
+      'paint': {
+          'circle-opacity': 0.75,
+          'circle-radius': 3,
+          'circle-color':   'rgb(53, 175, 109)'
+      }
+  }); */
+});
+map.on('click', function (e) {
+    var features = map.queryRenderedFeatures(e.point, { layers: ['trees-img'] });
+//    var coords = e.lngLat
+//    var lng = JSON.stringify(coords['lng']);
+//    var lat = JSON.stringify(coords['lat']);
+    if (!features.length) {
+        return;
+    }
+    var feature = features[0];
+    var imgkey = feature.properties["key"];
+    console.log(imgkey);
+//    var client = 'UTZhSnNFdGpxSEFFREUwb01GYzlXZzpkMWM2YzdjYjQxN2FhM2Vh'
+//    url = "https://a.mapillary.com/v2/search/im/close?client_id=" + client + "&lat="+lat+"&limit=1&lon="+lng
+//    imagekey = 'KXPQhn74azgtjJYcrGK-Fw';
+/*    $.ajax({
+      dataType: "json",
+      url: url,
+      success: function (data) {
+          console.log(JSON.stringify(map.unproject(e.point)));
+          var imgkey = data.ims[0].key;
+          var lng = data.ims[0].lon;
+          var lat = data.ims[0].lat;
+          var lnglat = '{\"lng\":' + lng + ', \"lat\":' + lat + '}'
+//          console.log(lnglat);
+          console.log(imgkey);
+*/
+          var popup = new mapboxgl.Popup()
+              .setLngLat(feature.geometry.coordinates)
+              .setHTML("<iframe width=\"320\" height=\"200\" src=\"https://embed-v1.mapillary.com/embed?version=1&filter=%5B%22all%22%5D&map_filter=%5B%22all%22%5D&image_key=" + imgkey + "&client_id=UTZhSnNFdGpxSEFFREUwb01GYzlXZzowMzg0MDZhNjNkYmNmMzQ0&style=photo\" frameborder=\"0\"></iframe><br><button style=\"float:left;background-color: white;border: none;color: black;padding: 5px 11px;text-align: center;text-decoration: none;display: inline-block;font-size: 12px;\">% tree pixels: " + (feature.properties["area"]*100).toFixed(2) + "</button> <button style=\"float:right;background-color: #4CAF50;border: none;color: white;padding: 5px 11px;text-align: center;text-decoration: none;display: inline-block;font-size: 12px;\" onclick=\"window.open('https://embed-v1.mapillary.com/embed?version=1&filter=%5B%22all%22%5D&map_filter=%5B%22all%22%5D&image_key=" + imgkey + "&client_id=UTZhSnNFdGpxSEFFREUwb01GYzlXZzowMzg0MDZhNjNkYmNmMzQ0&style=photo','_blank','resizable=yes')\">Open in Mapillary</button>")
+//              .setHTML("<img src=https://d1cuyjsrcm0gby.cloudfront.net/"+ imgkey + "/thumb-320.jpg>")
+              .addTo(map);
+//    });
+
+});
+
+map.on('mousemove', function (e) {
+    var features = map.queryRenderedFeatures(e.point, { layers: ['trees-img'] });
+    map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+});
+</script>
+</body>
+</html>
