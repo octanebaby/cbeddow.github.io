@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>Brewery Bike Tour - Fort Collins, CO</title>
+    <meta content='initial-scale=1,maximum-scale=1,user-scalable=no' name=
+    'viewport'>
+    <script src=
+    'https://api.tiles.mapbox.com/mapbox-gl-js/v0.12.4/mapbox-gl.js'>
+    </script>
+    <link href=
+    'https://api.tiles.mapbox.com/mapbox-gl-js/v0.12.4/mapbox-gl.css' rel=
+    'stylesheet'>
+    <link href=
+    "https://npmcdn.com/mapillary-js@1.4.1/dist/mapillary-js.min.css" rel=
+    "stylesheet">
+    <style>
+         body {
+             width: 1350px;
+             height: 480px;
+             background-color: black;
+
+         }
+        
+         a:link{
+           color: #99ff99;
+           text-decoration: none
+         }
+         a:visited{
+           color: #99ff99;
+           text-decoration: none
+         }
+         a:hover{
+           color: #99ff99;
+           text-decoration: none
+         }
+         a:active{
+           color: orange;
+           text-decoration: none
+         }
+         .title {
+           color: white;
+           font-family: "Century Gothic";
+           font-size: 24px;
+           text-align: center;
+           font-weight: bolder;
+         }
+         .intro {
+           color: white;
+           font-family: "Century Gothic";
+           font-size: 14px;
+           text-align: center;
+         }
+         .mly-wrapper {
+             position: relative;
+             background-color: grey;
+             width: 100%;
+             height: 100%;
+         }
+
+         .mapillary-js {
+             position: relative;
+             height: 100%;
+             width: 50%;
+         }
+
+         #map {
+             position: absolute;
+             width: 50%;
+             top: 0;
+             right: 0;
+             bottom: 0;
+             z-index: 100;
+         }
+         .mapboxgl-popup {
+             max-width: 400px;
+             font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+         }
+    </style>
+</head>
+<body>
+    <div class="title">
+        Fort Collins Breweries
+    </div>
+    <div class="intro">
+        <br>
+        <a href="http://wikitravel.org/en/Fort_Collins">Fort Collins,
+        Colorado</a> is widely known for its breweries and beer culture. The
+        map below charts a journey between six of the major breweries in town,
+        with street-level photos captured on Mapillary by user <a href=
+        "http://www.mapillary.com/profile/chrisbeddow">@chrisbeddow</a>. Click
+        <b>play</b> to begin your journey, and watch the bike navigate to
+        each brewery icon on the map.
+    </div><br>
+    <div class="mly-wrapper">
+        <div id='mly'></div>
+        <div id='map'></div>
+    </div><button onclick="play()">Play</button><button onclick=
+    "stop()">Stop</button> 
+    <script src=
+    "https://npmcdn.com/mapillary-js@1.4.1/dist/mapillary-js.min.js">
+    </script> 
+    <script>
+         mapboxgl.accessToken = 'pk.eyJ1IjoiY2JlZGRvdyIsImEiOiI5Q09YRG1RIn0.Izu6OPJ4CEEaSSpGuys3Xg';
+         var map = new mapboxgl.Map({
+             container: 'map', // container id
+             style: 'mapbox://styles/cbeddow/ciqr9gs0w0001cunkym6msvqf', //stylesheet location
+             center: [-105.055752, 40.586910], // starting position
+             zoom: 13.5 // starting zoom
+         })
+         map.addControl(new mapboxgl.Navigation({position: 'top-right'}));
+
+             var breweries = {
+                 type: 'geojson',
+                 data: {
+    "type": "FeatureCollection",
+    "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "marker-color": "#7e7e7e",
+        "marker-size": "medium",
+        "marker-symbol": "beer",
+        "name": "New Belgium"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -105.0683605670929,
+          40.59299362188426
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "marker-color": "#7e7e7e",
+        "marker-size": "medium",
+        "marker-symbol": "beer",
+        "name": "Odell Brewing Company"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -105.06330728530884,
+          40.58949034113514
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "marker-color": "#7e7e7e",
+        "marker-size": "medium",
+        "marker-symbol": "beer",
+        "name": "Fort Collins Brewery"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -105.05852222442626,
+          40.58920110859247
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "marker-color": "#7e7e7e",
+        "marker-size": "medium",
+        "marker-symbol": "beer",
+        "name": "Snowbank Brewing"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -105.0584363937378,
+          40.59003621322974
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "marker-color": "#7e7e7e",
+        "marker-size": "medium",
+        "marker-symbol": "beer",
+        "name": "Horse & Dragon Brewing"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -105.04573076963423,
+          40.58960440432914
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "marker-color": "#7e7e7e",
+        "marker-size": "medium",
+        "marker-symbol": "beer",
+        "name": "Funkwerks"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -105.04241824150085,
+          40.583175825130695
+        ]
+      }
+    }
+    ]
+    }
+             }
+
+             var markerSource = {
+                              type: 'geojson',
+                              data: {
+                                  type: 'Feature',
+                                  geometry: {
+                                      type: 'Point',
+                                      coordinates: [40.593396, -105.068918]
+                                  },
+                                  properties: {
+                                      title: 'You\'re here!',
+                                      'marker-color': '#94bff0',
+                                      'marker-size' : 'large',
+                                      'marker-symbol': 'bicycle'
+                                  }
+                              }
+                          }
+
+         var mapillarySource = {
+             type: 'vector',
+             tiles: ['https://d2munx5tg0hw47.cloudfront.net/tiles/{z}/{x}/{y}.mapbox'],
+             minzoom: 0,
+             maxzoom: 16
+         }
+
+         map.on('load', function () {
+
+             map.addSource('breweries', breweries)
+
+                 map.addLayer({
+                     id: 'breweries',
+                     type: 'symbol',
+                     source: 'breweries',
+                     layout: {
+                         'icon-image': '{marker-symbol}-15',
+                         'text-field': '{name}',
+                         'text-font': ["Open Sans Semibold", "Arial Unicode MS Bold"],
+                         'text-offset': [0, 0.6],
+                         'text-anchor': 'top'
+                     },
+                     paint: {
+                         'text-size': 10
+                     }
+                 }, 'markers', 'mapillary')
+
+                 map.addSource('markers', markerSource)
+
+                                  map.addLayer({
+                                      id: 'markers',
+                                      type: 'symbol',
+                                      source: 'markers',
+                                      layout: {
+                                          'icon-image': '{marker-symbol}-15',
+                                          'text-field': '{title}',
+                                          'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+                                          'text-offset': [-7, 0.0],
+                                          'text-anchor': 'left'
+                                      },
+                                      paint: {
+                                          'text-size': 10
+                                      }
+                                  })
+                 map.addSource('mapillary', mapillarySource)
+                 map.addLayer({
+                     'id': 'mapillary',
+                     'type': 'line',
+                     'source': 'mapillary',
+                     'source-layer': 'mapillary-sequences',
+                     "filter": ['==', 'username', 'chrisbeddow'],
+                     'layout': {
+                         'line-cap': 'round',
+                         'line-join': 'round'
+                     },
+                     'paint': {
+                         'line-opacity': 0.6,
+                         'line-color':   'rgb(53, 175, 109)',
+                         'line-width':   2
+                     }
+                 }, 'markers')
+
+         })
+
+             var mly = new Mapillary
+         .Viewer('mly',
+                 'UTZhSnNFdGpxSEFFREUwb01GYzlXZzpkMWM2YzdjYjQxN2FhM2Vh',  // ClientID for user chrisbeddow
+                 'KXPQhn74azgtjJYcrGK-Fw', {cover: true, cache: false, direction: false})
+
+
+             mly.on('nodechanged', function (node) {
+                 var lnglat = [node.latLon.lon, node.latLon.lat]
+
+                 var tempSource = new mapboxgl.GeoJSONSource({
+                     data: {
+                         type: 'Feature',
+                         geometry: {
+                             type: 'Point',
+                             coordinates: lnglat
+                         },
+                         properties: {
+                             title: 'You\'re here!',
+                             'marker-color': '#94bff0',
+                             'marker-size': 'large',
+                             'marker-symbol': 'bicycle'
+                         }
+                     }
+                 })
+                     map.getSource('markers').setData(tempSource._data)
+                     map.flyTo({center: lnglat, zoom: 16})
+             });
+
+    //begin test for sequence viewer with captions
+
+    var play = undefined;
+    var stop = undefined;
+
+    document.addEventListener("DOMContentLoaded", function(event) {
+    var mlyRoute = mly
+    var route = mlyRoute.getComponent("route");
+
+    route.configure({paths: [
+    //start
+        {sequenceKey: "a3ZJr6yec_DFROVqQWzU3g", startKey: "KXPQhn74azgtjJYcrGK-Fw", stopKey: "eRVRMxbc3_WRjgsMvI054Q",
+         infoKeys: [
+             {key: "QZuJdRWPjX4zMnXSbuytBw", description: "We start at New Belgium Brewing, the most famous brewery in Fort Collins."}]},
+    //New Belgium
+        {sequenceKey: "TgJY59XPD9-ksO7I-ZzUrQ", startKey: "h3Y1EpsIyzdz2g9vmPntjw", stopKey: "QBMB1VT5g2AP-VPC2xqetQ",
+         infoKeys: [
+             {key: "v2HXGtVRKt1JlLMEUx_Qdg", description: "Next we will head to Odell, a local favorite."}]},
+    //FCB
+        {sequenceKey: "UdTRT8gfgjpHAnXOW4cmeA", startKey: "tZNgX_HvZYC42oYxz162ww", stopKey: "M-2kr3W9OOzm9U_2HCA10A",
+                        infoKeys: [
+                            {key: "AIrZFbbKxse7cg4pRAttQA", description: "Fort Collins Brewing is next, known for its red ales."}]},
+    //Snowbank
+        {sequenceKey: "3_Az7MSaLSRWOJ1iuwbdHg", startKey: "Gjy2vpzZDoRmW6pbe1yzkw", stopKey: "M-2kr3W9OOzm9U_2HCA10A",
+                        infoKeys: [
+                          {key: "LrL7OlFHT6BPsaJ-RTM2IQ", description: "Snowbank is a great place to enjoy a saison and a quiet atmosphere."}]},
+    //Horse & Dragon
+        {sequenceKey: "xUEqXcXJaHONhF_NNCC7Mw", startKey: "ZwZNf3KnLaoFGXQm4AVWdw", stopKey: "RNk-3h8m6AiBNpV5prkKcA",
+                        infoKeys: [
+                          {key: "BpKZKzowcv3VnhEGS80JyQ", description: "And now for something completely different--the Horse & Dragon!"}]},
+    //Funkwerks
+        {sequenceKey: "HDxKGUZCjzQoFEN1X2AXnA", startKey: "iHZauaKsp1GDo8mSFgXs_w", stopKey: "tT0q1q5w6azZzCOxoHZubw",
+                        infoKeys: [
+                          {key: "CR0QVPsLBtCfbdeTziYnYg", description: "Last but not least, off to Funkwerks for some funky flavors!"}]}
+
+
+         ]
+      , playing: true});
+    mlyRoute.activateComponent("route");
+
+    play = function play() {
+     mlyRoute.deactivateCover();
+     route.play();
+    }
+
+    stop = function stop() {
+     route.stop()
+    }
+    })
+
+
+
+    </script>
+</body>
+</html>
