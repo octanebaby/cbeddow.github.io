@@ -1,0 +1,282 @@
+<html>
+<head>
+  <title>Mapillary Photo Story</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src='https://api.mapbox.com/mapbox-gl-js/v0.29.0/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v0.29.0/mapbox-gl.css' rel='stylesheet' />
+  <script src='https://unpkg.com/mapillary-js@2.2.0/dist/mapillary.min.js'></script>
+  <link href='https://unpkg.com/mapillary-js@2.2.0/dist/mapillary.min.css' rel='stylesheet' />
+  <style>
+  #map {
+    min-height: 70%;
+    max-height: 500px;
+    top:0;
+    bottom:5;
+    left:0;
+    right:1;
+  }
+
+  html, body {
+     position:absolute;
+     top:0;
+     bottom:0;
+     left:0;
+     right:0;
+     background-color: grey;
+     color: white;
+  }
+
+  #top {
+    background-color: #001a00;
+    background-opacity: .3;
+    min-height: 10%
+    top:0;
+    bottom:1;
+    left:0;
+    right:1;
+    border: 1;
+    border-color: white;
+  }
+
+  #bottom {
+    background-color: #001a00;
+    min-height: 20%;
+    top:5;
+    bottom:0;
+    left:0;
+    right:5;
+  }
+
+  #con {
+    position:relative;
+    width: 96%;
+    height: 96%;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
+    padding: 0;
+  }
+
+  #content {
+    background-color: #001a00;
+    padding: 0;
+    top:0;
+    bottom:1;
+    left:1;
+    right:0;
+    min-height: 10%;
+  }
+
+  .row-no-padding {
+    [class*="col-"] {
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+      margin: 0 !important;
+    }
+  }
+
+.row {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display:         flex;
+  flex-wrap: wrap;
+}
+.row > [class*='col-'] {
+  display: flex;
+  flex-direction: column;
+}
+.thumbnail {
+  background: #000;
+  border-color: #35AF6D;
+}
+.media-carousel
+{
+  margin-bottom: 0;
+  padding: 0 40px 30px 40px;
+  margin-top: 30px;
+}
+/* Previous button  */
+.media-carousel .carousel-control.left
+{
+  left: -12px;
+  background-image: none;
+  background: none repeat scroll 0 0 #222222;
+  border: 4px solid #FFFFFF;
+  border-radius: 23px 23px 23px 23px;
+  height: 40px;
+  width : 40px;
+  margin-top: 30px
+}
+/* Next button  */
+.media-carousel .carousel-control.right
+{
+  right: -12px !important;
+  background-image: none;
+  background: none repeat scroll 0 0 #222222;
+  border: 4px solid #FFFFFF;
+  border-radius: 23px 23px 23px 23px;
+  height: 40px;
+  width : 40px;
+  margin-top: 30px
+}
+/* Changes the position of the indicators */
+.media-carousel .carousel-indicators
+{
+  right: 50%;
+  top: auto;
+  bottom: 0px;
+  margin-right: -19px;
+}
+/* Changes the colour of the indicators */
+.media-carousel .carousel-indicators li
+{
+  background: #c0c0c0;
+}
+.media-carousel .carousel-indicators .active
+{
+  background: #333333;
+}
+.media-carousel img
+{
+  width: 250px;
+  height: 100px
+}
+  </style>
+<body>
+
+<div class="container" id="con">
+  <div class="row row-no-padding" id="top">
+    <div class="col-xs-12">
+      <h2 style="color:white;">My Photo Story</h2>
+    </div>
+  </div>
+
+  <div class="row row-no-padding">
+    <div class="col-xs-7">
+      <div class="row row-no-padding" style="min-height:70%" id="mly">
+      </div>
+      <div class="row row-no-padding" id="bottom">
+        <div class='col-md-12'>
+          <div class="carousel slide media-carousel" id="media">
+            <div class="carousel-inner">
+              <div class="item  active">
+
+                  <div class="col-md-3">
+                    <a class="thumbnail" href="#"><img alt="" src="https://d1cuyjsrcm0gby.cloudfront.net/KXPQhn74azgtjJYcrGK-Fw/thumb-320.jpg"></a>
+                  </div>
+                  <div class="col-md-3">
+                    <a class="thumbnail" href="#"><img alt="" src="http://placehold.it/320x240"></a>
+                  </div>
+                  <div class="col-md-3">
+                    <a class="thumbnail" href="#"><img alt="" src="http://placehold.it/320x240"></a>
+                  </div>
+                  <div class="col-md-3">
+                    <a class="thumbnail" href="#"><img alt="" src="http://placehold.it/320x240"></a>
+                  </div>
+
+              </div>
+              <div class="item">
+                <div class="row">
+                  <div class="col-md-4">
+                    <a class="thumbnail" href="#"><img alt="" src="http://placehold.it/150x150"></a>
+                  </div>
+                  <div class="col-md-4">
+                    <a class="thumbnail" href="#"><img alt="" src="http://placehold.it/150x150"></a>
+                  </div>
+                  <div class="col-md-4">
+                    <a class="thumbnail" href="#"><img alt="" src="http://placehold.it/150x150"></a>
+                  </div>
+                </div>
+              </div>
+              <div class="item">
+                <div class="row">
+                  <div class="col-md-4">
+                    <a class="thumbnail" href="#"><img alt="" src="http://placehold.it/150x150"></a>
+                  </div>
+                  <div class="col-md-4">
+                    <a class="thumbnail" href="#"><img alt="" src="http://placehold.it/150x150"></a>
+                  </div>
+                  <div class="col-md-4">
+                    <a class="thumbnail" href="#"><img alt="" src="http://placehold.it/150x150"></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <a data-slide="prev" href="#media" class="left carousel-control">‹</a>
+            <a data-slide="next" href="#media" class="right carousel-control">›</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-5" id="content">
+      <div class-"row row-no-padding" style="min-height:50%" id="map">
+      </div>
+      <div class-"row row-no-padding" id="content">
+        <div class="col-xs-12">
+          <h1>Exploring My City</h1>
+          <p>My city is fun. Let me show you around. The sequence to the left shows the street where I ride my bike. You can see on the map that it's located around the corner from my house.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  var mly = new Mapillary.Viewer(
+              'mly',
+              'UTZhSnNFdGpxSEFFREUwb01GYzlXZzpkMWM2YzdjYjQxN2FhM2Vh',
+              'KXPQhn74azgtjJYcrGK-Fw'
+          );
+  mapboxgl.accessToken = 'pk.eyJ1IjoiY2JlZGRvdyIsImEiOiI5Q09YRG1RIn0.Izu6OPJ4CEEaSSpGuys3Xg';
+  var map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/streets-v9',
+      center: [-122.3, 47.6147628],
+      zoom: 11
+  });
+
+  map.on('style.load', function () {
+    var mapillarySource = {
+        type: 'vector',
+        tiles: ['http://d25uarhxywzl1j.cloudfront.net/v0.1/{z}/{x}/{y}.mvt'],
+        minzoom: 0,
+        maxzoom: 14
+    };
+    map.addSource('mapillary', mapillarySource);
+    map.addLayer({
+        'id': 'mapillary',
+        'type': 'line',
+        'source': 'mapillary',
+        'source-layer': 'mapillary-sequences',
+        'layout': {
+            'line-cap': 'round',
+            'line-join': 'round'
+        },
+        'paint': {
+            'line-opacity': 0.6,
+            'line-color':   'rgb(53, 175, 109)',
+            'line-width':   2
+        }
+    });
+  });
+</script>
+
+</body>
+
+
+
+
+
+
+
+
+
+
+</html>
