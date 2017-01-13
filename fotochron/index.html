@@ -1,59 +1,193 @@
-var coords = [];
-var client_id = "UTZhSnNFdGpxSEFFREUwb01GYzlXZzpkNTRmOTk5NzQ2N2E3ZDAy";
+<html>
+<head>
+  <title>Mapillary Photo Story</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-function loadImage(image) {
-  $(".img").click(function() {
-     currentImage = 0;
-     currentImage = images[image];
-     var url = "https://a.mapillary.com/v3/images/" + images[image] + "?client_id=" + client_id;
-     $.ajax({
-       dataType: "json",
-       url: url,
-       success: function (data) {
-         console.log(data.geometry.coordinates);
-         lng = data.geometry.coordinates[0];
-         lat = data.geometry.coordinates[1];
-         map.flyTo({
-             center: [lng, lat],
-             zoom: 12
-         });
-       }
-     });
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src='https://api.mapbox.com/mapbox-gl-js/v0.31.0/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v0.31.0/mapbox-gl.css' rel='stylesheet' />
+  <script src='https://unpkg.com/mapillary-js@2.3.0/dist/mapillary.min.js'></script>
+  <link href='https://unpkg.com/mapillary-js@2.3.0/dist/mapillary.min.css' rel='stylesheet' />
+  <script src="input.js"></script>
+  <script src="app.js"></script>
 
-     $("#mly").empty().append("<script>var mly = new Mapillary.Viewer('mly','UTZhSnNFdGpxSEFFREUwb01GYzlXZzpkNTRmOTk5NzQ2N2E3ZDAy',currentImage,{component: {attribution: false,cover: false,direction: {distinguishSequence: true,maxWidth: 460,minWidth: 180},imagePlane: {imageTiling: true},stats: true},renderMode: Mapillary.RenderMode.Fill});</script>");
-     $("#content").empty().append("<h3 class='slideTitle'>" + titles[image] + "</h3>")
-     $("#content").append("<p class='slideContent'>" + content[image] + "</p>")
-     image = 77777777777777;
-  });
-};
-
-$(document).ready(
-  function() {
-
-    $("#title").empty().append("<h1 style='padding: 10;'>" + project_title + "</h1>")
-    $("#subtitle").empty().append("<h4 style='padding: 10;'>" + project_subtitle + "</h4>")
-    $("#content").empty().append("<h3 class='slideTitle'>" + titles[0] + "</h3>")
-    $("#content").append("<p class='slideContent'>" + content[0] + "</p>")
-    for (i = 0; i < images.length; i++) {
-      $("#gallery").append(
-        "<div class='img'><img src='https://d1cuyjsrcm0gby.cloudfront.net/"+images[i]+"/thumb-320.jpg' href='#' onclick='loadImage(" + i + ")'/></div>"
-      );
-    }
-    var url = "https://a.mapillary.com/v3/images/" + images[i] + "?client_id=" + client_id;
-    $.ajax({
-      dataType: "json",
-      url: url,
-      success: function (data) {
-//        coords.push(data.geometry.coordinates);
-        console.log(data.geometry.coordinates);
-        lng = data.geometry.coordinates[0];
-        lat = data.geometry.coordinates[1];
-        map.flyTo({
-            center: [lng, lat],
-            zoom: 12
-        });
-      }
-    });
-
+  <style>
+  body {
+    color: white;
+    background-color: white;
   }
-);
+  .bg-red {
+    background-color: red;
+  }
+  .bg-blue {
+    background-color: blue;
+  }
+  .bg-green {
+    background-color: green;
+  }
+  .bg-yellow {
+    background-color: gold;
+  }
+  .bg-med-green {
+    background-color: #58935a;
+  }
+  .bg-dark-green {
+    background-color: #2b512c;
+  }
+  .tall {
+    min-height:450px;
+  }
+  .short {
+    min-height:250px;
+  }
+  .tall2 {
+    min-height:500px;
+  }
+  .short2 {
+    min-height:200px;
+  }
+  .text {
+    padding: 10px;
+  }
+  .alt-grid [class*="col-"] {
+    padding-left:0;padding-right:00
+  }
+  .alt-grid .row {
+    margin-left:0;margin-right:0
+  }
+  /* container adjusted */
+  .alt-grid .container {
+    width:100%;max-width:none;padding:30;
+  }
+  div.img {
+      margin: 5px;
+      border: 1px solid #ccc;
+      float: left;
+      width: 90px;
+  }
+
+  div.img:hover {
+      border: 1px solid #777;
+  }
+
+  div.img img {
+      width: 100%;
+      height: auto;
+  }
+
+  .slideTitle {
+      padding: 10px;
+      text-align: left;
+  }
+  .slideContent {
+      padding: 10px;
+      text-align: left;
+  }
+  </style>
+</head>
+<body class="alt-grid">
+
+<div class="container">
+    <div class="row">
+      <div class="col-sm-12 bg-dark-green" id="title">
+        <h1 style="padding: 10;">Title</h1>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12 bg-med-green" id="subtitle">
+        <h4 style="padding: 10;">Subtitle</h4>
+      </div>
+    </div>
+
+
+  <div class="row">
+
+    <div class="col-sm-7">
+      <div class="row">
+        <div class="col-sm-12 bg-green tall2" id="mly">
+          <script>
+          var mly = new Mapillary.Viewer(
+              "mly",
+              "UTZhSnNFdGpxSEFFREUwb01GYzlXZzpkNTRmOTk5NzQ2N2E3ZDAy",
+              currentImage,
+              {
+                  component: {
+                      attribution: false,
+                      cover: false,
+                      direction: {
+                          distinguishSequence: true,
+                          maxWidth: 460,
+                          minWidth: 180
+                      },
+                      imagePlane: {
+                          imageTiling: true
+                      },
+                      stats: true
+                  },
+                  renderMode: Mapillary.RenderMode.Fill
+              }
+          );
+          </script>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12 bg-med-green short2" id="content">
+
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-5 bg-blue">
+      <div class="row">
+        <div class="col-sm-12 bg-blue tall" id="map">
+          <script>
+            mapboxgl.accessToken = 'pk.eyJ1IjoiY2JlZGRvdyIsImEiOiI5Q09YRG1RIn0.Izu6OPJ4CEEaSSpGuys3Xg';
+            var map = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/mapbox/streets-v9',
+                center: [-111.9242749897015, 41.08991936220268],
+                zoom: 11
+            });
+
+            map.on('style.load', function () {
+              var mapillarySource = {
+                  type: 'vector',
+                  tiles: ['http://d25uarhxywzl1j.cloudfront.net/v0.1/{z}/{x}/{y}.mvt'],
+                  minzoom: 0,
+                  maxzoom: 14
+              };
+              map.addSource('mapillary', mapillarySource);
+              map.addLayer({
+                  'id': 'mapillary',
+                  'type': 'line',
+                  'source': 'mapillary',
+                  'source-layer': 'mapillary-sequences',
+                  'layout': {
+                      'line-cap': 'round',
+                      'line-join': 'round'
+                  },
+                  'paint': {
+                      'line-opacity': 0.6,
+                      'line-color':   'rgb(53, 175, 109)',
+                      'line-width':   2
+                  }
+              });
+            });
+          </script>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12 bg-dark-green short">
+          <div class="row" id="gallery">
+          </div>
+        </div>
+      </div>
+  </div>
+
+</div>
+
+</body>
+</html>

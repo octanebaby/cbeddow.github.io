@@ -1,4 +1,3 @@
-var coords = [];
 var client_id = "UTZhSnNFdGpxSEFFREUwb01GYzlXZzpkNTRmOTk5NzQ2N2E3ZDAy";
 
 function loadImage(image) {
